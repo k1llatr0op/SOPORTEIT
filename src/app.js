@@ -23,12 +23,7 @@ app.use(
     secret: process.env.SESSION_SECRET || "fallback_local",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      maxAge: 1000 * 60 * 60, // 1h
-      httpOnly: true,
-      secure: false, // Cambiar a true si usas HTTPS
-      sameSite: 'lax' // Necesario para proxy inverso
-    }
+    cookie: { maxAge: 1000 * 60 * 60 }
   })
 );
 // ===== Sesión disponible en vistas =====
