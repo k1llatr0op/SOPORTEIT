@@ -14,6 +14,9 @@ const BASE_PATH = process.env.BASE_PATH || '';
 
 const app = express();
 
+// ======= IMPORTANTE: Trust proxy para que las cookies funcionen con proxy inverso =======
+app.set('trust proxy', 1);
+
 // ======= Configuración de sesión (debe ir antes de las rutas) =======
 app.use(
   session({
@@ -22,6 +25,9 @@ app.use(
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60, // 1h
+      httpOnly: true,
+      secure: false, // Cambiar a true si usas HTTPS
+      sameSite: 'lax', // Necesario para proxy inverso
     },
   })
 );
