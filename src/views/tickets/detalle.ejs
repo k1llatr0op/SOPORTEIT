@@ -1,0 +1,830 @@
+<% function _normEstado(e){ return String(e||'').trim().toUpperCase(); } function claseEstado(e='' ){ const
+    s=_normEstado(e); if (s.includes('ABIERTO')) return 'abierto' ; if (s.includes('EN PROCESO')) return 'proceso' ; if
+    (s.includes('EN ESPERA')) return 'espera' ; return 'cerrado' ; } function textoEstado(e='' ){ const
+    s=_normEstado(e); if (s.includes('ABIERTO')) return 'ABIERTO' ; if (s.includes('EN PROCESO')) return 'EN PROCESO' ;
+    if (s.includes('EN ESPERA')) return 'EN ESPERA' ; return 'CERRADO' ; }%>
+    <header class="app-header d-flex justify-content-between align-items-center">
+        <h1 class="title m-0">Sistema de Soporte IT</h1>
+        <a href="/logout" class="logout">Cerrar sesión</a>
+    </header>
+
+    <div id="ticketFormRoot" class="ticket-form">
+        <div class="form-head">
+            <h2>Ticket #<%= ticket.id_ticket %> — <%= ticket.tipo_humano %>
+                        <span id="editBadge" class="edit-badge" hidden>Edición activa</span>
+            </h2>
+            <div class="form-head-right">
+                <!-- Botones movidos debajo del formulario -->
+            </div>
+        </div>
+
+        <form id="formTicket" action="/tickets/<%= ticket.id_ticket %>/actualizar" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" id="estadoInput" name="estado" value="<%= ticket.estado %>">
+            <input type="hidden" name="tipo" value="<%= ticket.tipo %>">
+
+            <!-- ===== Padre ===== -->
+           <div>
+                <label>Área</label>
+                <input type="text" name="area" value="<%= ticket.area %>" disabled>
+            </div>
+            <div>
+                <label>Departamento</label>
+                <input type="text" name="departamento" value="<%= ticket.departamento %>" disabled>
+            </div>
+            <div>
+                <label>Fecha</label>
+                <input type="date" name="fecha_ticket"
+                    value="<%= (ticket.fecha_ticket || '').toISOString ? ticket.fecha_ticket.toISOString().slice(0,10) : ticket.fecha_ticket %>"
+                    disabled>
+            </div>
+            <div>
+                <label>Ticket SN</label>
+                <input type="text" name="ticket_sn" value="<%= ticket.ticket_sn %>" disabled>
+            </div>
+
+            <div>
+                <label>Usuario (responsable del equipo)</label>
+                <input type="text" name="usuario_resp" value="<%= ticket.usuario_resp %>" disabled>
+            </div>
+            <div class="no-print">
+                <label>Contacto</label>
+                <input type="text" name="contacto_resp" value="<%= ticket.contacto_resp %>" disabled>
+            </div>
+            <div>
+                <label>Responsable Interno</label>
+                <input type="text" name="resp_interno" value="<%= ticket.resp_interno %>" disabled>
+            </div>
+
+            <div class="grid-full">
+                <h3 class="section-title">Datos del Equipo</h3>
+            </div>
+
+            <div>
+                <label>Equipo</label>
+                <input type="text" name="equipo" value="<%= ticket.equipo %>" disabled>
+            </div>
+            <div>
+                <label>Marca</label>
+                <input type="text" name="marca" value="<%= ticket.marca %>" disabled>
+            </div>
+            <div>
+                <label>Modelo</label>
+                <input type="text" name="modelo" value="<%= ticket.modelo %>" disabled>
+            </div>
+            <div>
+                <label>S/N</label>
+                <input type="text" name="numeroserie" value="<%= ticket.numeroserie %>" disabled>
+            </div>
+            <div>
+                <label>Placa AF</label>
+                <input type="text" name="placa_af" value="<%= ticket.placa_af %>" disabled>
+            </div>
+
+            <div class="grid-full">
+                <h3 class="section-title">Datos específicos</h3>
+            </div>
+
+            <% if (ticket.tipo==='Diagnóstico' || ticket.tipo==='Mantenimiento' ) { %>
+                <div>
+                    <label>Usuario Windows</label>
+                    <input type="text" name="usuario_windows" value="<%= hijo?.usuario_windows || '' %>" disabled>
+                </div>
+                <div>
+                    <label>Contraseña</label>
+                    <input type="text" name="contra_windows"
+                        value="<%= isAdmin ? (hijo?.contra_windows || '') : '*****' %>" disabled>
+                </div>
+                <div>
+                    <label>Nombre del equipo (Hostname)</label>
+                    <input type="text" name="nombre_equipo" value="<%= hijo?.nombre_equipo || '' %>" disabled>
+                </div>
+                <div>
+                    <label>Tiempo Total de Uso</label>
+                    <input type="text" name="tiempo_total_uso" value="<%= hijo?.tiempo_uso || '' %>" disabled>
+                </div>
+                <div>
+                    <label>Procesador</label>
+                    <input type="text" name="procesador" value="<%= hijo?.procesador || '' %>" disabled>
+                </div>
+                <div>
+                    <label>Almacenamiento</label>
+                    <input type="text" name="almacenamiento" value="<%= hijo?.almacenamiento || '' %>" disabled>
+                </div>
+                <div>
+                    <label>Memoria RAM</label>
+                    <input type="text" name="memoria_ram" value="<%= hijo?.ram || '' %>" disabled>
+                </div>
+                <div>
+                    <label>Vigencia de Garantía</label>
+                    <input type="text" name="vigencia_garantia" value="<%= hijo?.garantia || '' %>" disabled>
+                </div>
+                <div class="grid-full">
+                    <label>Evidencia / Imágenes del Equipo</label>
+
+                    <!-- Modificación: Ahora lee de un arreglo propio del ticket, no de la bitácora -->
+                    <% const equipoImagenes=ticket.imagenes_evidencia || []; %>
+                        <% if (equipoImagenes.length) { %>
+                            <div class="evidencia-imagenes-grid">
+                                <% equipoImagenes.forEach(img=> {
+                                    const imgUrl = '/' + String(img.path).replace(/^\/+/, '');
+                                    %>
+                                    <figure class="evidencia-imagen">
+                                        <img src="<%= encodeURI(imgUrl) %>" alt="<%= img.nombre || 'Imagen de evidencia' %>" />
+                                        <figcaption>
+                                            <%= img.nombre || 'Imagen de evidencia' %>
+                                        </figcaption>
+                                    </figure>
+                                    <% }); %>
+                            </div>
+                            <% } else { %>
+                                <div class="evidencia-sin-imagenes">No hay imágenes de evidencia adjuntas.</div>
+                                <% } %>
+
+                                    <!-- NUEVO: Input independiente para subir evidencias (se habilitará al editar el ticket) -->
+                                    <div class="upload-evidencia-box mt-2">
+                                        <input type="file" id="inputEvidencia" name="imagenes_evidencia"
+                                            accept=".png,.jpg,.jpeg,.webp,.gif" multiple disabled>
+                                    </div>
+                </div>
+
+                
+                <div class="grid-full">
+                    <label>Dictamen Técnico</label>
+                    <textarea name="dictamen_tecnico" rows="2" disabled><%= hijo?.dictamen_tecnico || '' %></textarea>
+                </div>
+                <% } else if (ticket.tipo==='Garantía' ) { %>
+                    <div>
+                        <label>Empresa Proveedora</label>
+                        <input type="text" name="empresa_proveedora" value="<%= hijo?.empresa_proveedora || '' %>"
+                            disabled>
+                    </div>
+                    <div>
+                        <label>Folio Ticket Proveedor</label>
+                        <input type="text" name="folio_ticket" value="<%= hijo?.folio_ticket || '' %>" disabled>
+                    </div>
+                    <div>
+                        <label>Contacto del Proveedor</label>
+                        <input type="text" name="contacto_proveedor" value="<%= hijo?.contacto_proveedor || '' %>"
+                            disabled>
+                    </div>
+                    <div class="grid-full">
+                        <label>Descripción de la Falla</label>
+                        <textarea name="descripcion_falla" rows="3"
+                            disabled><%= hijo?.descripcion_falla || '' %></textarea>
+                    </div>
+
+                    <div>
+                        <label>Fecha reporte a proveedor</label>
+                        <input type="date" name="fecha_reporte_proveedor"
+                            value="<%= (hijo?.fecha_reporte_proveedor || '').toISOString ? hijo?.fecha_reporte_proveedor?.toISOString().slice(0,10) : hijo?.fecha_reporte_proveedor || '' %>" disabled>
+                    </div>
+                    <div>
+                        <label>Fecha de envío</label>
+                        <input type="date" name="fecha_envio"
+                            value="<%= (hijo?.fecha_envio || '').toISOString ? hijo?.fecha_envio?.toISOString().slice(0,10) : hijo?.fecha_envio || '' %>" disabled>
+                    </div>
+                    <div>
+                        <label>Fecha de recepción</label>
+                        <input type="date" name="fecha_recepcion"
+                            value="<%= (hijo?.fecha_recepcion || '').toISOString ? hijo?.fecha_recepcion?.toISOString().slice(0,10) : hijo?.fecha_recepcion || '' %>" disabled>
+                    </div>
+
+                    <div>
+                        <label>Resultado</label>
+                        <input type="text" name="resultado" value="<%= hijo?.resultado || '' %>" disabled>
+                    </div>
+                    <div class="grid-full">
+                    <label>Evidencia / Imágenes del Equipo</label>
+
+                    <!-- Modificación: Ahora lee de un arreglo propio del ticket, no de la bitácora -->
+                    <% const equipoImagenes=ticket.imagenes_evidencia || []; %>
+                        <% if (equipoImagenes.length) { %>
+                            <div class="evidencia-imagenes-grid">
+                                <% equipoImagenes.forEach(img=> {
+                                    const imgUrl = '/' + String(img.path).replace(/^\/+/, '');
+                                    %>
+                                    <figure class="evidencia-imagen">
+                                        <img src="<%= encodeURI(imgUrl) %>" alt="<%= img.nombre || 'Imagen de evidencia' %>" />
+                                        <figcaption>
+                                            <%= img.nombre || 'Imagen de evidencia' %>
+                                        </figcaption>
+                                    </figure>
+                                    <% }); %>
+                            </div>
+                            <% } else { %>
+                                <div class="evidencia-sin-imagenes">No hay imágenes de evidencia adjuntas.</div>
+                                <% } %>
+
+                                    <!-- NUEVO: Input independiente para subir evidencias (se habilitará al editar el ticket) -->
+                                    <div class="upload-evidencia-box mt-2">
+                                        <input type="file" id="inputEvidencia" name="imagenes_evidencia"
+                                            accept=".png,.jpg,.jpeg,.webp,.gif" multiple disabled>
+                                    </div>
+                </div>
+
+                    <div class="grid-full">
+                        <label>Observaciones</label>
+                        <textarea name="observaciones" rows="2" disabled><%= hijo?.observaciones || '' %></textarea>
+                    </div>
+                    <% } else if (ticket.tipo==='Configuración' ) { %>
+                        <div class="grid-full">
+                    <label>Evidencia / Imágenes del Equipo</label>
+
+                    <!-- Modificación: Ahora lee de un arreglo propio del ticket, no de la bitácora -->
+                    <% const equipoImagenes=ticket.imagenes_evidencia || []; %>
+                        <% if (equipoImagenes.length) { %>
+                            <div class="evidencia-imagenes-grid">
+                                <% equipoImagenes.forEach(img=> {
+                                    const imgUrl = '/' + String(img.path).replace(/^\/+/, '');
+                                    %>
+                                    <figure class="evidencia-imagen">
+                                        <img src="<%= encodeURI(imgUrl) %>" alt="<%= img.nombre || 'Imagen de evidencia' %>" />
+                                        <figcaption>
+                                            <%= img.nombre || 'Imagen de evidencia' %>
+                                        </figcaption>
+                                    </figure>
+                                    <% }); %>
+                            </div>
+                            <% } else { %>
+                                <div class="evidencia-sin-imagenes">No hay imágenes de evidencia adjuntas.</div>
+                                <% } %>
+
+                                    <!-- NUEVO: Input independiente para subir evidencias (se habilitará al editar el ticket) -->
+                                    <div class="upload-evidencia-box mt-2">
+                                        <input type="file" id="inputEvidencia" name="imagenes_evidencia"
+                                            accept=".png,.jpg,.jpeg,.webp,.gif" multiple disabled>
+                                    </div>
+                </div>
+
+                        <div>
+                            <label>Entregó cargador</label>
+                            <input type="text" name="entrego_cargador" value="<%= hijo?.entrego_cargador || '' %>"
+                                disabled>
+                        </div>
+                        <div>
+                            <label>Usuario Windows</label>
+                            <input type="text" name="usuario_windows" value="<%= hijo?.usuario_windows || '' %>"
+                                disabled>
+                        </div>
+                        <div>
+                            <label>Contraseña</label>
+                            <input type="text" name="contra_windows" value="<%= hijo?.contra_windows || '' %>" disabled>
+                        </div>
+                        <div class="grid-full">
+                            <label>Programas solicitados</label>
+                            <textarea name="programas_solicitados" rows="3"
+                                disabled><%= hijo?.programas_solicitados || '' %></textarea>
+                        </div>
+                        <% } %>
+            <div class="grid-full">
+                <h3 class="section-title">Firmas</h3>
+            </div>
+            <div class="signature-row">
+                <div class="signature-card">
+                    <label>Ingeniero en Soporte</label>
+                        <div class="signature-container">
+                        <canvas id="canvasFirmaIngeniero" width="420" height="180" class="signature-canvas"></canvas>
+                    </div>
+                    <div class="signature-actions">
+                        <button type="button" id="btnClearFirmaIngeniero" class="btn-beige">Borrar firma</button>
+                    </div>
+                    <input type="hidden" id="firmaIngenieroInput" name="firma_ingeniero" value="<%= ticket.firma_ingeniero || '' %>">
+                </div>
+                <div class="signature-card">
+                    <label>Jefatura de Operaciones IT</label>
+                    <div class="signature-container">
+                        <canvas id="canvasFirmaJefatura" width="420" height="180" class="signature-canvas"></canvas>
+                    </div>
+                    <div class="signature-actions">
+                        <button type="button" id="btnClearFirmaJefatura" class="btn-beige">Borrar firma</button>
+                    </div>
+                    <input type="hidden" id="firmaJefaturaInput" name="firma_jefatura" value="<%= ticket.firma_jefatura || '' %>">
+                </div>
+            </div>
+        </form>
+
+        <!-- Acciones del ticket (antes en la cabecera) -->
+        <div class="form-actions form-head-right no-print" style="margin-top:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+            <% if (isAdmin) { %>
+                <form id="formEstado" action="/tickets/<%= ticket.id_ticket %>/estado" method="post" style="display:inline;">
+                    <input type="hidden" id="estadoHidden" name="estado" value="<%= ticket.estado %>">
+                    <button type="button" id="btnEstado" class="btn-estado <%= claseEstado(ticket.estado) %>">
+                        <%= (ticket.estado || '' ).toUpperCase() %>
+                    </button>
+                </form>
+                <button id="btnEditar" type="button" class="btn-brand">Editar</button>
+                <form id="formEliminar" action="/tickets/<%= ticket.id_ticket %>/eliminar" method="post" class="d-inline">
+                    <button type="submit" id="btnEliminar" class="btn-danger">Eliminar</button>
+                </form>
+            <% } else { %>
+                <button type="button" id="btnEstado" class="btn-estado <%= claseEstado(ticket.estado) %>">
+                    <%= (ticket.estado || '' ).toUpperCase() %>
+                </button>
+            <% } %>
+
+            <button type="button" id="btnImprimir" class="btn-beige">Imprimir PDF</button>
+            <a id="btnBackCancel" href="/menu" class="btn-beige">Regresar</a>
+        </div>
+        <!-- ===== Bitácora ===== -->
+        <div class="grid-full">
+            <h3 class="section-title">Bitácora</h3>
+        </div>
+        <br>
+        <div class="bitacora-box grid-full">
+            <% if (isAdmin) { %>
+                <form class="bitacora-form" action="/tickets/<%= ticket.id_ticket %>/bitacora" method="post"
+                    enctype="multipart/form-data">
+                    <div class="row2">
+                        <div>
+                            <label>Responsable</label>
+                            <input type="text" name="responsable" required>
+                        </div>
+                        <div>
+                            <label>Adjunto (opcional)</label>
+                            <input type="file" name="adjunto" accept=".png,.jpg,.jpeg,.webp,.gif,.pdf">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>Nota</label>
+                        <textarea name="texto" rows="3"
+                            placeholder="Describe lo realizado / hallazgos / evidencias..."></textarea>
+                    </div>
+
+                    <div class="bitacora-actions">
+                        <button type="submit" class="btn-brand">Guardar</button>
+                    </div>
+                </form>
+                <% } %>
+
+                    <% if (!notas || notas.length===0) { %>
+                        <div class="alert alert-warning mt-2">Aún no hay notas en la bitácora.</div>
+                        <% } else { %>
+                            <ul class="notas-list">
+                                <% notas.forEach(n=> {
+                                    const isImg = (n.adjunto_path||'').match(/\.(png|jpe?g|webp|gif)$/i);
+                                    %>
+                                    <li class="nota-item">
+                                        <div class="nota-head">
+                                            <span class="nota-resp"><strong>
+                                                    <%= n.responsable %>
+                                                </strong></span>
+                                            <span class="nota-fecha">
+                                                <%= n.fecha_fmt || '' %>
+                                            </span>
+                                        </div>
+                                        <div class="nota-body">
+                                            <%= n.texto %>
+                                        </div>
+                                        <% if (isAdmin) { %>
+                                            <div class="nota-actions-row">
+                                                <a href="/tickets/<%= ticket.id_ticket %>/bitacora/<%= n.id_nota %>/eliminar"
+                                                   class="btn-danger btn-sm"
+                                                   onclick="return confirm('¿Eliminar esta nota y su adjunto (si existe)?');">
+                                                    Eliminar
+                                                </a>
+                                            </div>
+                                        <% } %>
+                                        
+                                    <!-- Dentro de tu ul.notas-list, mantén el botón de previsualización pero quita el renderizado automático si no lo deseas allí -->
+                                    <% if (n.adjunto_path) { 
+                                        const url='/' + String(n.adjunto_path).replace(/^\/+/, '' ); 
+                                        const isImg=/\.(png|jpe?g|webp|gif)$/i.test(n.adjunto_path || '' ); 
+                                    %>
+                                        <div class="nota-attachment-row">
+                                            <button type="button" class="file-pill click-allow"
+                                                data-href="<%= encodeURI(url) %>"
+                                                data-name="<%= n.adjunto_nombre || 'archivo' %>"
+                                                data-isimg="<%= isImg ? '1' : '0' %>">
+                                                <svg width="14" height="14" style="vertical-align:-2px">
+                                                    <circle cx="7" cy="7" r="6" fill="currentColor" />
+                                                </svg>
+                                                <span>
+                                                    <%= n.adjunto_nombre || 'Ver adjunto de bitácora' %>
+                                                </span>
+                                            </button>
+                                        </div>
+                                            <% if (isImg) { %>
+                                                <div class="nota-attachment">
+                                                    <img src="<%= encodeURI(url) %>"
+                                                        alt="<%= n.adjunto_nombre || 'Imagen adjunta' %>"
+                                                        class="nota-img" />
+                                                </div>
+                                            <% } %>
+                                        <% } %>
+
+
+                                    </li>
+                                    <% }) %>
+                            </ul>
+                            <% } %>
+
+        </div>
+    </div>
+
+    <div id="ariaStatus" class="sr-only" aria-live="polite"></div>
+
+    <!-- Modal de confirmación para eliminar -->
+    <div id="modalEliminar" class="modal-overlay" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="tituloEliminar">
+            <h3 id="tituloEliminar" class="modal-title">Confirmar eliminación</h3>
+
+            <p style="margin: .75rem 0 1rem; color:#4d3a2a;">
+                ¿Estás seguro de que deseas eliminar este ticket?<br>
+                <strong>Esta acción no se puede deshacer.</strong>
+            </p>
+
+            <div class="modal-actions">
+                <button type="button" id="btnCancelarEliminar" class="btn-beige">Cancelar</button>
+                <button type="button" id="btnConfirmarEliminar" class="btn-danger">Eliminar</button>
+            </div>
+
+            <button class="modal-close" id="btnCerrarModalEliminar" aria-label="Cerrar">×</button>
+        </div>
+    </div>
+
+    <!-- Modal de previsualización reutilizando tu estilo -->
+    <div id="modalPreview" class="modal-overlay" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="prevTitulo">
+            <h3 id="prevTitulo" class="modal-title">Vista previa</h3>
+            <div id="prevContent" style="min-height:320px; display:flex; align-items:center; justify-content:center;">
+            </div>
+            <div class="modal-actions">
+                <a id="prevDownload" class="btn-beige" href="#" download>Descargar</a>
+                <button type="button" class="btn-brand" id="prevCerrar">Cerrar</button>
+            </div>
+            <button class="modal-close" id="prevX" aria-label="Cerrar">×</button>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            // abrir/cerrar modal
+            const overlay = document.getElementById('modalPreview');
+            const content = document.getElementById('prevContent');
+            const prevDown = document.getElementById('prevDownload');
+            const btnX = document.getElementById('prevX');
+            const btnCerrar = document.getElementById('prevCerrar');
+
+            function openModal() { overlay.classList.add('show'); overlay.setAttribute('aria-hidden', 'false'); }
+            function closeModal() { overlay.classList.remove('show'); overlay.setAttribute('aria-hidden', 'true'); content.innerHTML = ''; }
+
+            btnX.addEventListener('click', closeModal);
+            btnCerrar.addEventListener('click', closeModal);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+            // handler de cada archivo
+            document.querySelectorAll('.file-pill').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const href = btn.dataset.href;
+                    const isImg = btn.dataset.isimg === '1';
+                    const name = btn.dataset.name || 'archivo';
+
+                    prevDown.href = href;
+                    prevDown.setAttribute('download', name);
+
+                    if (isImg) {
+                        content.innerHTML = `<img src="${href}" alt="${name}" style="max-width:100%; max-height:70vh; border:1px solid var(--beige-borde); border-radius:10px;" />`;
+                    } else {
+                        content.innerHTML = `<iframe src="${href}" title="${name}" style="width:100%; height:70vh; border:1px solid var(--beige-borde); border-radius:10px;"></iframe>`;
+                    }
+                    openModal();
+                });
+            });
+        })();
+    </script>
+
+
+    <script>
+        (() => {
+            const form = document.getElementById('formTicket');
+            const btnEditar = document.getElementById('btnEditar');
+            const btnBackCancel = document.getElementById('btnBackCancel');
+
+            // ====== Estado  ======
+            const ESTADOS = [
+                { texto: "ABIERTO", clase: "abierto" },
+                { texto: "EN PROCESO", clase: "proceso" },
+                { texto: "EN ESPERA", clase: "espera" },
+                { texto: "CERRADO", clase: "cerrado" }
+            ];
+            const formEstado = document.getElementById('formEstado');
+            const btnEstado = document.getElementById('btnEstado');
+            const estadoHidden = document.getElementById('estadoHidden');
+
+            let idx = Math.max(0, ESTADOS.findIndex(s => s.texto === (estadoHidden.value || '').toUpperCase()));
+
+            function renderEstado(i) {
+                const e = ESTADOS[i];
+                btnEstado.textContent = e.texto;
+                btnEstado.className = `btn-estado ${e.clase}`;
+                estadoHidden.value = e.texto;
+            }
+            renderEstado(idx);
+
+            // ====== Indicador "modo edición" ======
+            const ticketForm = document.querySelector('.ticket-form');
+            let editBadge = document.querySelector('.edit-badge');
+            if (!editBadge) {
+                editBadge = document.createElement('span');
+                editBadge.className = 'edit-badge';
+                editBadge.textContent = 'Modo edición activo';
+                editBadge.hidden = true;
+                document.querySelector('.form-head-right')?.appendChild(editBadge);
+            }
+
+            // ====== Control de edición ======
+            const controls = Array.from(form.querySelectorAll('input, textarea, select'));
+            const snapshot = new Map();
+            let isEditing = false;
+
+            function saveSnapshot() {
+                snapshot.clear();
+                controls.forEach(el => snapshot.set(el.name, el.value));
+                snapshot.set('_ESTADO_', estadoHidden.value);
+            }
+            saveSnapshot();
+
+            function setEditable(on) {
+                isEditing = on;
+
+                // Habilitar/Deshabilitar campos (el hidden del estado no importa)
+                controls.forEach(el => {
+                    if (el.type === 'hidden') return;
+                    el.disabled = !on;
+                });
+
+                // Bloquear el botón de estado en edición
+                btnEstado.disabled = on;
+
+                // Alternar botones
+                btnEditar.textContent = on ? 'Guardar' : 'Editar';
+                btnBackCancel.textContent = on ? 'Cancelar' : 'Regresar';
+
+                // Indicadores visuales
+                editBadge.hidden = !on;
+                ticketForm?.classList.toggle('editing', on);
+            }
+
+            setEditable(false);
+
+            // Editar / Guardar
+            btnEditar.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (isEditing) {
+                    signaturePads.forEach(pad => { if (pad) pad.commit(); });
+                    if (form.requestSubmit) {
+                        form.requestSubmit();
+                    } else {
+                        form.submit();        // guarda TODO (padre + hijo)
+                    }
+                    return;
+                }
+                setEditable(true);      // entra a edición
+            });
+
+            // Cancelar / Regresar
+            btnBackCancel.addEventListener('click', (e) => {
+                if (btnBackCancel.textContent === 'Cancelar') {
+                    e.preventDefault();
+                    // restaurar campos
+                    controls.forEach(el => {
+                        if (snapshot.has(el.name)) el.value = snapshot.get(el.name);
+                    });
+                    // restaurar estado visible
+                    idx = Math.max(0, ESTADOS.findIndex(s => s.texto === (snapshot.get('_ESTADO_') || '').toUpperCase()));
+                    renderEstado(idx);
+
+                    setEditable(false);   // salir de edición
+                }
+                // si dice Regresar, navega al href="/menu"
+            });
+
+            // ====== LÓGICA DEL BOTÓN DE ESTADO (solo fuera de edición) ======
+            btnEstado.addEventListener('click', () => {
+                if (isEditing) return;                // bloqueado en edición
+                idx = (idx + 1) % ESTADOS.length;
+                renderEstado(idx);
+                formEstado.submit();                  // sólo envía el estado
+            });
+        })();
+
+        // ===== MODAL DE CONFIRMACIÓN DE ELIMINAR =====
+        const modalEliminar = document.getElementById('modalEliminar');
+        const btnEliminar = document.getElementById('btnEliminar');
+        const btnCerrarModal = document.getElementById('btnCerrarModalEliminar');
+        const btnCancelarDel = document.getElementById('btnCancelarEliminar');
+        const btnConfirmarDel = document.getElementById('btnConfirmarEliminar');
+        const formEliminar = document.getElementById('formEliminar');
+
+        function openModalEliminar() {
+            modalEliminar.classList.add('show');
+            modalEliminar.setAttribute('aria-hidden', 'false');
+            document.addEventListener('keydown', escClose);
+        }
+
+        function closeModalEliminar() {
+            modalEliminar.classList.remove('show');
+            modalEliminar.setAttribute('aria-hidden', 'true');
+            document.removeEventListener('keydown', escClose);
+        }
+
+        function escClose(e) { if (e.key === 'Escape') closeModalEliminar(); }
+
+        if (btnEliminar) {
+            btnEliminar.addEventListener('click', (e) => {
+                e.preventDefault();
+                openModalEliminar();
+            });
+        }
+
+        btnCerrarModal.addEventListener('click', closeModalEliminar);
+        btnCancelarDel.addEventListener('click', closeModalEliminar);
+        modalEliminar.addEventListener('click', (e) => {
+            if (e.target === modalEliminar) closeModalEliminar();
+        });
+
+        const btnImprimir = document.getElementById('btnImprimir');
+        if (btnImprimir) {
+            btnImprimir.addEventListener('click', () => {
+                window.print();
+            });
+        }
+
+        const signaturePads = [];
+        function setupSignaturePad(canvasId, inputId, clearBtnId) {
+            const canvas = document.getElementById(canvasId);
+            const input = document.getElementById(inputId);
+            const clearBtn = document.getElementById(clearBtnId);
+            if (!canvas || !input || !clearBtn) return null;
+
+            const ctx = canvas.getContext('2d');
+            const dpi = window.devicePixelRatio || 1;
+
+            function resizeCanvas() {
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = Math.floor(rect.width * dpi);
+                canvas.height = Math.floor(rect.height * dpi);
+                ctx.setTransform(dpi, 0, 0, dpi, 0, 0);
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.strokeStyle = '#1f2f40';
+                ctx.lineWidth = 2.5;
+            }
+            resizeCanvas();
+
+            let drawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            function drawLine(x, y) {
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+
+            function getPointerPosition(event) {
+                const rect = canvas.getBoundingClientRect();
+                if (event.touches && event.touches.length > 0) {
+                    return {
+                        x: event.touches[0].clientX - rect.left,
+                        y: event.touches[0].clientY - rect.top
+                    };
+                }
+                return {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top
+                };
+            }
+
+            function startDraw(event) {
+                const { x, y } = getPointerPosition(event);
+                drawing = true;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                lastX = x;
+                lastY = y;
+                event.preventDefault();
+            }
+
+            function moveDraw(event) {
+                if (!drawing) return;
+                const { x, y } = getPointerPosition(event);
+                drawLine(x, y);
+                lastX = x;
+                lastY = y;
+                event.preventDefault();
+            }
+
+            function stopDraw(event) {
+                drawing = false;
+                if (event && event.preventDefault) event.preventDefault();
+            }
+
+            function loadSignature() {
+            if (!input.value) return;
+            const img = new Image();
+            img.onload = () => {
+                const rect = canvas.getBoundingClientRect();
+                ctx.clearRect(0, 0, rect.width, rect.height);
+                ctx.drawImage(img, 0, 0, rect.width, rect.height);
+            };
+            img.src = input.value;
+            }
+
+            function clearSignature() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                input.value = '';
+            }
+
+            canvas.addEventListener('pointerdown', (event) => {
+                if (canvas.dataset.enabled !== '1') return;
+                startDraw(event);
+                if (event.pointerId !== undefined) canvas.setPointerCapture(event.pointerId);
+            });
+            canvas.addEventListener('pointermove', moveDraw);
+            canvas.addEventListener('pointerup', stopDraw);
+            canvas.addEventListener('pointercancel', stopDraw);
+            canvas.addEventListener('pointerleave', stopDraw);
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', moveDraw);
+            window.addEventListener('mouseup', stopDraw);
+            canvas.addEventListener('touchstart', startDraw, { passive: false });
+            canvas.addEventListener('touchmove', moveDraw, { passive: false });
+            canvas.addEventListener('touchend', stopDraw);
+            canvas.addEventListener('touchcancel', stopDraw);
+
+            clearBtn.addEventListener('click', clearSignature);
+
+            loadSignature();
+
+            return {
+                canvas,
+                input,
+                clearBtn,
+                setEnabled(on) {
+                    canvas.dataset.enabled = on ? '1' : '0';
+                    canvas.style.pointerEvents = on ? 'auto' : 'auto';
+                    canvas.style.cursor = on ? 'crosshair' : 'not-allowed';
+                    clearBtn.disabled = !on;
+                    clearBtn.style.opacity = on ? '1' : '0.5';
+                },
+                commit() {
+                    if (input && canvas) {
+                        input.value = canvas.toDataURL('image/png');
+                    }
+                }
+            };
+        }
+
+        signaturePads.push(setupSignaturePad('canvasFirmaIngeniero', 'firmaIngenieroInput', 'btnClearFirmaIngeniero'));
+        signaturePads.push(setupSignaturePad('canvasFirmaJefatura', 'firmaJefaturaInput', 'btnClearFirmaJefatura'));
+
+        function setSignatureEditing(on) {
+            signaturePads.forEach(pad => { if (pad) pad.setEnabled(on); });
+        }
+
+        setSignatureEditing(true);
+
+        const ticketForm = document.getElementById('formTicket');
+        if (ticketForm) {
+            ticketForm.addEventListener('submit', () => {
+                signaturePads.forEach(pad => { if (pad) pad.commit(); });
+            });
+        }
+
+        btnConfirmarDel.addEventListener('click', () => {
+            closeModalEliminar();
+            formEliminar.submit(); // Elimina definitivamente
+        });
+
+        // Convertir canvas a imágenes antes de imprimir para asegurar que se vean
+        function renderSignatureImages() {
+            signaturePads.forEach(pad => {
+                if (!pad || !pad.canvas) return;
+                const data = pad.input && pad.input.value ? pad.input.value : null;
+                let img = pad.canvas.parentElement.querySelector('.signature-print');
+                if (!img) {
+                    img = document.createElement('img');
+                    img.className = 'signature-print';
+                    img.alt = 'Firma';
+                    pad.canvas.parentElement.appendChild(img);
+                }
+                if (data) {
+                    img.src = data;
+                    img.style.display = 'block';
+                } else {
+                    img.style.display = 'none';
+                }
+            });
+        }
+
+        window.addEventListener('beforeprint', () => {
+            signaturePads.forEach(pad => { if (pad) pad.commit(); });
+            renderSignatureImages();
+        });
+
+        window.addEventListener('afterprint', () => {
+            // eliminar imágenes temporales para volver al estado normal
+            document.querySelectorAll('.signature-print').forEach(img => img.remove());
+        });
+    </script>

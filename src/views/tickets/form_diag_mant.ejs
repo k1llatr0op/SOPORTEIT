@@ -1,0 +1,152 @@
+<header class="app-header d-flex justify-content-between align-items-center">
+    <h1 class="title m-0">Sistema de Soporte IT</h1>
+    <div class="d-flex gap-2 align-items-center">
+        <a href="/logout" class="logout">Cerrar sesión</a>
+    </div>
+</header>
+
+<div class="ticket-form">
+    <div class="form-head">
+        <h2>Nuevo <%= tipo %>
+        </h2>
+
+        <div class="form-head-right">
+            <button type="button" id="btnEstado" class="btn-estado abierto" data-estado="ABIERTO">ABIERTO</button>
+            <button type="submit" class="btn-brand" form="formTicket">Guardar</button>
+            <a href="/menu" class="btn-beige">Cancelar</a>
+        </div>
+    </div>
+
+    <form id="formTicket" action="/tickets/guardar" method="post" novalidate>
+        <input type="hidden" id="estadoInput" name="estado" value="ABIERTO">
+        <input type="hidden" name="tipo" value="<%= tipo %>">
+
+        <!-- ===== Encabezado general ===== -->
+        <div>
+            <label>Área</label>
+            <input type="text" name="area">
+        </div>
+        <div>
+            <label>Departamento</label>
+            <input type="text" name="departamento">
+        </div>
+        <div>
+            <label>Fecha</label>
+            <input type="date" name="fecha_ticket">
+        </div>
+        <div>
+            <label>Ticket SN</label>
+            <input type="text" name="ticket_sn" placeholder="Opcional">
+        </div>
+
+        <div>
+            <label>Usuario (responsable del equipo)</label>
+            <input type="text" name="usuario_resp">
+        </div>
+        <div>
+            <label>Contacto</label>
+            <input type="text" name="contacto_resp" placeholder="Tel / correo interno">
+        </div>
+        <div>
+            <label>Responsable Interno</label>
+            <input type="text" name="resp_interno" placeholder="Admin asignado">
+        </div>
+
+        <!-- ===== Título de sección ===== -->
+        <div class="grid-full">
+            <h3 class="section-title">Datos del Equipo</h3>
+        </div>
+
+        <div>
+            <label>Equipo</label>
+            <input type="text" name="equipo" placeholder="Laptop, CPU, Monitor...">
+        </div>
+        <div>
+            <label>Marca</label>
+            <input type="text" name="marca">
+        </div>
+        <div>
+            <label>Modelo</label>
+            <input type="text" name="modelo">
+        </div>
+        <div>
+            <label>S/N (Número de serie)</label>
+            <input type="text" name="numeroserie">
+        </div>
+
+        <div>
+            <label>Placa AF</label>
+            <input type="text" name="placa_af" placeholder="Opcional">
+        </div>
+        <div>
+            <label>Tiempo Total de Uso</label>
+            <input type="text" name="tiempo_total_uso" placeholder="p. ej. 8 años">
+        </div>
+        <div>
+            <label>Usuario Windows</label>
+            <input type="text" name="usuario_windows" placeholder="Opcional">
+        </div>
+        <div>
+            <label>Contraseña</label>
+            <input type="text" name="contra_windows" placeholder="Opcional">
+        </div>
+        <div>
+            <label>Nombre del equipo (Hostname)</label>
+            <input type="text" name="nombre_equipo">
+        </div>
+
+        <!-- ===== Título de sección ===== -->
+        <div class="grid-full">
+            <h3 class="section-title">Datos Específicos</h3>
+        </div>
+
+        <div>
+            <label>Procesador</label>
+            <input type="text" name="procesador" placeholder="Opcional">
+        </div>
+        <div>
+            <label>Almacenamiento</label>
+            <input type="text" name="almacenamiento" placeholder="p. ej. 512 GB">
+        </div>
+        <div>
+            <label>Memoria RAM</label>
+            <input type="text" name="memoria_ram" placeholder="p. ej. 16 GB">
+        </div>
+        <div>
+            <label>Vigencia de Garantía</label>
+            <input type="text" name="vigencia_garantia" placeholder="p. ej. Sin garantía / hasta 2026-03">
+        </div>
+
+        <!-- ===== Título de sección ===== -->
+        <div class="grid-full">
+            <h3 class="section-title">Diagnóstico Técnico</h3>
+        </div>
+
+        <div class="grid-full">
+            <label>Diagnóstico Técnico</label>
+            <textarea name="dictamen_tecnico" rows="2"
+                placeholder="FUNCIONANDO / BAJA / NO REPARABLE / OBSOLETO / OTRO"></textarea>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnEstado = document.getElementById("btnEstado");
+        const inputEstado = document.getElementById("estadoInput");
+        const estados = [
+            { texto: "ABIERTO", clase: "abierto", valor: "ABIERTO" },
+            { texto: "EN PROCESO", clase: "proceso", valor: "EN PROCESO" },
+            { texto: "EN ESPERA", clase: "espera", valor: "EN ESPERA" },
+            { texto: "CERRADO", clase: "cerrado", valor: "CERRADO" }
+        ];
+        let indice = 0;
+        btnEstado.addEventListener("click", () => {
+            indice = (indice + 1) % estados.length;
+            const e = estados[indice];
+            btnEstado.textContent = e.texto;
+            btnEstado.className = `btn-estado ${e.clase}`;
+            inputEstado.value = e.valor;
+        });
+    });
+</script>

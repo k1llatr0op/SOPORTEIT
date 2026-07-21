@@ -1,0 +1,29 @@
+// ===== PALETA XCARET =====
+
+// Verdes institucionales
+$verde-xcaret: #006C4F;   // principal
+$verde-hover:  #198754;   // hover o confirmación
+
+// Estados
+$rojo:    #D9534F;  // abierto / error
+$verde:   #28A745;  // cerrado / éxito
+$amarillo:#F4C542;  // en proceso
+$naranja: #F6A623;  // en espera
+
+// Tonos beige
+$beige-fuerte:     #A68A64; // subtítulos
+$beige-medio:      #BFA98A; // labels
+$beige-claro:      #D9CBB8; // placeholder
+$beige-borde:      #CBB89D; // bordes
+$beige-header:     #EDE6DB; // header o fondo secciones
+$beige-linea:      #8C7250; // línea activa
+$gris-fondo:       #F7F7F7; // fondo general
+
+:root {
+  --verde-xcaret: #{$verde-xcaret};
+  --verde-hover: #{$verde-hover};
+  --beige-fuerte: #{$beige-fuerte};
+  --beige-borde: #{$beige-borde};
+  --beige-header: #{$beige-header};
+  --gris-fondo: #{$gris-fondo};
+}

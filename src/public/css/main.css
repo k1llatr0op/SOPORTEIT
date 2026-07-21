@@ -1,0 +1,1199 @@
+@charset "UTF-8";
+/* ============================================================
+   TIPOGRAFÍA BASE
+============================================================ */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+:root {
+  --verde-xcaret: #006C4F;
+  --verde-hover: #198754;
+  --beige-fuerte: #A68A64;
+  --beige-borde: #CBB89D;
+  --beige-header: #EDE6DB;
+  --gris-fondo: #F7F7F7;
+}
+
+body {
+  background-color: #f0efed;
+  color: #1a1a1a;
+  font-family: "Inter", "Poppins", system-ui, sans-serif;
+  font-size: 15px;
+}
+
+/* ============================================================
+   UTILIDADES
+============================================================ */
+.d-none {
+  display: none !important;
+}
+
+.is-disabled,
+.is-disabled * {
+  pointer-events: none !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+[disabled],
+[aria-disabled=true] {
+  cursor: not-allowed !important;
+  opacity: 0.6;
+}
+
+/* ============================================================
+   VARIABLES DE DISEÑO (sistema del ticket)
+============================================================ */
+:root {
+  --navy: #1a3a5c;
+  --navy-light: #e8eef5;
+  --navy-mid: #2d5a8e;
+  --surface: #ffffff;
+  --surface-alt: #f7f8fa;
+  --border: #dde3ec;
+  --text-main: #1a1a1a;
+  --text-sub: #475569;
+  --text-muted: #94a3b8;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 2px 8px rgba(26,58,92,.08);
+  --shadow-md: 0 6px 20px rgba(26,58,92,.12);
+  --shadow-lg: 0 12px 32px rgba(26,58,92,.16);
+}
+
+/* ============================================================
+   BOTONES
+============================================================ */
+#btnBackCancel, .theme-toggle, .btn-outline, .btn-danger, .btn-beige, .btn-brand {
+  border-radius: var(--radius-md);
+  padding: 0.5rem 1rem;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.2px;
+  border: none;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+#btnBackCancel:hover, .theme-toggle:hover, .btn-outline:hover, .btn-danger:hover, .btn-beige:hover, .btn-brand:hover {
+  filter: brightness(0.93);
+  transform: translateY(-1px);
+}
+#btnBackCancel:active, .theme-toggle:active, .btn-outline:active, .btn-danger:active, .btn-beige:active, .btn-brand:active {
+  transform: translateY(0);
+}
+
+.btn-brand {
+  background: var(--verde-xcaret);
+  color: #fff;
+  
+}
+.btn-brand:hover {
+  color: #fff;
+}
+
+.btn-beige {
+  background: #e8eef5;
+  color: var(--navy);
+  border: 1px solid var(--border);
+}
+.btn-beige:hover {
+  color: var(--navy);
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+.btn-danger:hover {
+  color: #b91c1c;
+}
+
+.btn-outline {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--navy);
+}
+.btn-outline:hover {
+  background: var(--navy-light);
+  color: var(--navy);
+}
+
+.btn-sm {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   HEADER
+============================================================ */
+.app-header {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.app-header .title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+.app-header::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 1.4rem;
+  background: var(--navy);
+  border-radius: 2px;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+.app-header .logout {
+  color: var(--text-sub);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  transition: background 0.15s ease;
+}
+.app-header .logout:hover {
+  background: var(--navy-light);
+  color: var(--navy);
+}
+
+/* ============================================================
+   MODO OSCURO toggle
+============================================================ */
+.theme-toggle {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--navy);
+  font-size: 0.82rem;
+  padding: 0.35rem 0.75rem;
+}
+.theme-toggle .theme-icon {
+  font-size: 1rem;
+}
+.theme-toggle .theme-label {
+  font-weight: 600;
+}
+
+/* ============================================================
+   PESTAÑAS (menú abiertos / cerrados)
+============================================================ */
+.nav-tabs {
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 0;
+}
+.nav-tabs .nav-link {
+  color: var(--text-sub);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: none;
+  padding: 0.5rem 1.1rem;
+  margin-right: 0.25rem;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  transition: background 0.15s;
+}
+.nav-tabs .nav-link.active {
+  color: var(--navy);
+  background: var(--surface);
+  border-bottom: 3px solid var(--navy);
+  font-weight: 800;
+}
+.nav-tabs .nav-link:hover:not(.active) {
+  background: var(--navy-light);
+  color: var(--navy);
+}
+
+/* ============================================================
+   BARRA DE HERRAMIENTAS (búsqueda + botones)
+============================================================ */
+.menu-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.85rem 0 1rem;
+}
+.menu-toolbar .search {
+  flex: 1;
+}
+.menu-toolbar .search input {
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.875rem;
+  color: var(--text-main);
+  width: 100%;
+  padding: 0 0.85rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.menu-toolbar .search input::placeholder {
+  color: var(--text-muted);
+}
+.menu-toolbar .search input:focus {
+  outline: none;
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.12);
+}
+.menu-toolbar a {
+  text-decoration: none !important;
+}
+
+/* ============================================================
+   TARJETAS DE TICKETS (menú principal)
+============================================================ */
+.tickets-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+@media (min-width: 992px) {
+  .tickets-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ticket-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  padding: 1rem 1.15rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  position: relative;
+}
+.ticket-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  background: var(--navy);
+  border-radius: 0 3px 3px 0;
+}
+.ticket-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.ticket-card .card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+.ticket-card .card-head .title {
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+.ticket-card .card-head .title .muted {
+  color: var(--text-sub);
+  font-weight: 600;
+}
+.ticket-card .card-head .date {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+.ticket-card .card-body {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 10px;
+  align-items: start;
+}
+.ticket-card .info p {
+  margin-bottom: 0.3rem;
+  font-size: 0.875rem;
+  color: var(--text-main);
+}
+.ticket-card .info .label {
+  font-weight: 700;
+  color: var(--navy);
+}
+.ticket-card .info .sep {
+  border-top: 1px solid var(--border);
+  margin: 0.6rem 0;
+}
+.ticket-card .aside {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* Badges de estado en tarjetas */
+.badge-estado {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  min-width: 110px;
+  text-align: center;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+.badge-estado.abierto {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.badge-estado.proceso {
+  background: #fef3c7;
+  color: #b45309;
+}
+.badge-estado.espera {
+  background: #ffedd5;
+  color: #c2410c;
+}
+.badge-estado.cerrado {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.ticket-card .stretched-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ticket-card .click-allow {
+  position: relative;
+  z-index: 2;
+}
+
+.ticket-card a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ============================================================
+   MODALES
+============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.modal-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: min(860px, 92vw);
+  padding: 1.25rem;
+  position: relative;
+  transform: scale(0.96);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.modal-overlay.show .modal-box {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.modal-title {
+  margin: 0 0 0.85rem 0;
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 1.05rem;
+  border-bottom: 2px solid var(--navy);
+  padding-bottom: 0.5rem;
+}
+
+.tipo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  margin: 0.75rem 0 1.1rem;
+}
+@media (max-width: 720px) {
+  .tipo-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.opcion {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.8rem;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.08s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+  width: 100%;
+}
+.opcion:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.opcion:focus {
+  outline: 3px solid rgba(26, 58, 92, 0.2);
+}
+.opcion.selected {
+  border-color: var(--navy);
+  background: var(--navy-light);
+}
+
+.opcion-icono {
+  font-size: 2rem;
+  margin-bottom: 0.35rem;
+}
+
+.opcion-titulo {
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 0.9rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.modal-close:hover {
+  color: var(--navy);
+}
+
+#modalEliminar .modal-box {
+  max-width: 420px;
+}
+
+/* ============================================================
+   FORMULARIO DE TICKETS (nuevo y detalle)
+============================================================ */
+.ticket-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-sm);
+  margin-top: 1rem;
+  border-top: 4px solid var(--navy);
+}
+.ticket-form .form-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+.ticket-form .form-head h2 {
+  margin: 0;
+  font-weight: 800;
+  color: var(--navy);
+  font-size: 1.2rem;
+  letter-spacing: -0.3px;
+}
+.ticket-form form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 1.25rem;
+}
+@media (max-width: 768px) {
+  .ticket-form form {
+    grid-template-columns: 1fr;
+  }
+}
+.ticket-form form label {
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--text-sub);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+.ticket-form form input[type=text],
+.ticket-form form input[type=date],
+.ticket-form form input[type=email],
+.ticket-form form input[type=password],
+.ticket-form form select,
+.ticket-form form textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+    padding: 0.5rem 0.7rem;
+  background: var(--surface);
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ticket-form form input[type=text]:focus,
+.ticket-form form input[type=date]:focus,
+.ticket-form form input[type=email]:focus,
+.ticket-form form input[type=password]:focus,
+.ticket-form form select:focus,
+.ticket-form form textarea:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px rgba(26, 58, 92, 0.1);
+  outline: none;
+}
+.ticket-form form input[type=text]::placeholder,
+.ticket-form form input[type=date]::placeholder,
+.ticket-form form input[type=email]::placeholder,
+.ticket-form form input[type=password]::placeholder,
+.ticket-form form select::placeholder,
+.ticket-form form textarea::placeholder {
+  color: var(--text-muted);
+}
+.ticket-form form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+.ticket-form form select {
+  cursor: pointer;
+}
+
+h3.section-title {
+  margin: 0.5rem 0 0.25rem;
+  padding-bottom: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--navy);
+  border-bottom: 2px solid var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.grid-full {
+  grid-column: 1/-1;
+}
+
+.form-head-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.btn-estado {
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  min-width: 110px;
+  text-align: center;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  transition: filter 0.15s, transform 0.1s;
+}
+.btn-estado:hover {
+  filter: brightness(0.92);
+  transform: scale(1.02);
+}
+.btn-estado.abierto {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.btn-estado.proceso {
+  background: #fef3c7;
+  color: #b45309;
+}
+.btn-estado.espera {
+  background: #ffedd5;
+  color: #c2410c;
+}
+.btn-estado.cerrado {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.edit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--navy);
+  background: var(--navy-light);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+}
+
+.ticket-form input[disabled],
+.ticket-form textarea[disabled],
+.ticket-form select[disabled] {
+  background: var(--surface-alt);
+  color: var(--text-sub);
+  border-color: var(--border);
+}
+
+.ticket-form.editing input:not([type=hidden]),
+.ticket-form.editing textarea,
+.ticket-form.editing select {
+  background: var(--surface);
+  border-color: var(--navy);
+}
+
+.ticket-form.editing .form-head {
+  border-bottom: 2px dashed var(--navy);
+}
+
+#btnBackCancel {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  color: var(--navy);
+}
+
+/* ============================================================
+   FIRMAS
+============================================================ */
+.signature-row {
+  grid-column: 1/-1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+@media (max-width: 640px) {
+  .signature-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.signature-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  background: var(--surface-alt);
+}
+.signature-card label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--navy);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.signature-container {
+  position: relative;
+}
+
+.signature-canvas {
+  width: 100%;
+  height: 120px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  display: block;
+  cursor: crosshair;
+}
+
+/* ============================================================
+   BITÁCORA
+============================================================ */
+.bitacora-box {
+  grid-column: 1/-1;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 1.1rem;
+  border-top: 3px solid var(--navy);
+}
+
+.bitacora-form {
+  display: grid;
+  gap: 0.8rem 1rem;
+}
+
+.bitacora-form .row2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem 1rem;
+}
+@media (max-width: 768px) {
+  .bitacora-form .row2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.bitacora-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.notas-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.nota-item {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.9rem;
+  border-left: 3px solid var(--navy);
+}
+
+.nota-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--navy);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.nota-resp {
+  font-weight: 800;
+  color: var(--navy);
+}
+
+.nota-body {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.nota-file {
+  margin-top: 0.25rem;
+}
+
+.file-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+.file-pill:hover {
+  background: var(--navy-light);
+}
+
+.bitacora-form.is-disabled input,
+.bitacora-form.is-disabled textarea,
+.bitacora-form.is-disabled select,
+.bitacora-form.is-disabled button {
+  background: var(--surface-alt);
+  color: var(--text-sub);
+  border-color: var(--border);
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+.toast {
+  position: fixed;
+  right: 18px;
+  top: 18px;
+  z-index: 2000;
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--navy);
+  font-weight: 700;
+  font-size: 0.875rem;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  visibility: hidden;
+}
+.toast.success {
+  border-left: 4px solid #15803d;
+}
+.toast.error {
+  border-left: 4px solid #b91c1c;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.toast.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+.toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* ============================================================
+   ALERTAS Y MODO OSCURO
+============================================================ */
+.alert-danger {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  color: #b91c1c;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+body.dark-mode {
+  --surface: #1e2737;
+  --surface-alt: #252f42;
+  --border: #2e3d55;
+  --text-main: #e2e8f0;
+  --text-sub: #94a3b8;
+  --text-muted: #64748b;
+  --navy-light: #1e2f45;
+  background-color: #141a26;
+  color: var(--text-main);
+}
+body.dark-mode .app-header { border-color: var(--border); background: var(--surface); }
+body.dark-mode .ticket-card { border-color: var(--border); background: var(--surface); }
+body.dark-mode .ticket-form { border-color: var(--border); background: var(--surface); }
+body.dark-mode .modal-box { border-color: var(--border); background: var(--surface); }
+body.dark-mode .bitacora-box { border-color: var(--border); background: var(--surface); }
+body.dark-mode .nota-item { border-color: var(--border); background: var(--surface-alt); }
+body.dark-mode .opcion { border-color: var(--border); background: var(--surface); }
+body.dark-mode .btn-beige { border-color: var(--border); background: var(--surface-alt); color: var(--text-main); }
+body.dark-mode .btn-outline { border-color: var(--border); background: var(--surface); color: var(--text-main); }
+
+body.dark-mode input, body.dark-mode select, body.dark-mode textarea {
+  background: var(--surface-alt) !important;
+  color: var(--text-main) !important;
+  border-color: var(--border) !important;
+}
+body.dark-mode input::placeholder, body.dark-mode select::placeholder, body.dark-mode textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+body.dark-mode .ticket-form input[disabled],
+body.dark-mode .ticket-form textarea[disabled],
+body.dark-mode .ticket-form select[disabled] {
+  background: #1a2235 !important;
+  color: var(--text-muted) !important;
+}
+body.dark-mode .nav-tabs .nav-link { color: var(--text-sub); }
+body.dark-mode .nav-tabs .nav-link.active { color: #e2e8f0; border-bottom-color: #e2e8f0; }
+
+.nota-fecha { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+.nota-actions-row, .nota-attachment-row { margin-top: 0.4rem; }
+.nota-attachment { margin-top: 0.5rem; }
+.nota-attachment .nota-img {
+  max-width: 220px;
+  max-height: 160px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+}
+
+.signature-actions { margin-top: 0.5rem; display: flex; justify-content: flex-end; }
+.alert-warning { background: #fef9c3; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 0.75rem 1rem; color: #92660a; font-weight: 600; font-size: 0.875rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+body.dark-mode .nota-attachment .nota-img { border-color: var(--border); }
+body.dark-mode .alert-warning { background: #3a3320; border-color: #5a4f2a; color: #fbbf24; }
+
+.evidencia-imagenes-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+  justify-content: center;
+}
+
+.evidencia-imagen {
+  width: 150px;
+}
+
+.evidencia-imagen img {
+  width: 150px;
+  height: 130px;
+  object-fit: center;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  display: block;
+}
+
+.evidencia-imagen figcaption {
+  font-size: 10px;
+  color: #64748b;
+  text-align: center;
+  margin-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   IMPRESIÓN COMPLETA (CORREGIDA Y REORDENADA)
+============================================================ */
+@media print {
+  @page {
+    size: letter;
+    margin: 8mm 10mm;
+  }
+  body {
+    background: #fff !important;
+    font-size: 9.5px;
+  }
+
+  /* Ocultar elementos innecesarios */
+  .app-header,
+  .form-head-right,
+  .bitacora-form,
+  .signature-actions,
+  #ariaStatus,
+  .modal-overlay,
+  .nota-item,
+  .bitacora-box.grid-full
+  .alert-danger,
+  .alert-warning,
+  .alert
+  .no-print {
+    display: none !important;
+  }
+
+  #formTicket input[type="file"],
+  .bitacora-form input[type="file"] {
+    display: none !important;
+  }
+
+  /* Forzar orden vertical: Formulario -> Bitácora (Imágenes) -> Firmas */
+  .ticket-form {
+    box-shadow: none !important;
+    border: none !important;
+    border-top: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* 1. Formulario arriba */
+  #formTicket {
+    order: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, 1fr) !important;
+    gap: 4px 8px !important;
+    font-size: 9px !important;
+  }
+  #formTicket > div { grid-column: span 1; }
+  #formTicket .grid-full { grid-column: 1/-1 !important; }
+
+  /* Estilos compactos para campos */
+  .form-head { border-bottom: 2.5px solid #1a3a5c !important; padding-bottom: 4px !important; margin-bottom: 6px !important; }
+  .form-head h2 { font-size: 13px !important; color: #1a3a5c !important; }
+  .form-head .edit-badge { display: none !important; }
+  .btn-estado { font-size: 7.5px !important; padding: 2px 8px !important; min-width: auto !important; border-radius: 20px !important; pointer-events: none; }
+  
+  #formTicket label {
+    display: block !important;
+    font-size: 6.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.4px !important;
+    color: #64748b !important;
+    margin-bottom: 1px !important;
+  }
+  #formTicket input, #formTicket select {
+    border: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    padding: 0 0 1px 0 !important;
+    font-size: 9px !important;
+    color: #1a1a1a !important;
+    height: auto !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #formTicket textarea {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 3px !important;
+    background: transparent !important;
+    font-size: 8.5px !important;
+    padding: 2px 4px !important;
+    min-height: 105px !important;
+    resize: none !important;
+  }
+  h3.section-title {
+    font-size: 7.5px !important;
+    padding-bottom: 1px !important;
+    margin: 3px 0 3px !important;
+    border-bottom: 1px solid #cbd5e1 !important;
+    color: #1a3a5c !important;
+  }
+
+  /* 2. Bitácora (Imágenes adjuntas) al centro */
+  .bitacora-box {
+    order: 2 !important;
+    border: none !important;
+    border-top: 1px solid #e2e8f0 !important;
+    padding: 4px 0 0 !important;
+    margin-top: 10px !important;
+    margin-bottom: 15px !important;
+  }
+  .bitacora-box h3.section-title { display: none !important; } /* Esconde el título Bitácora para mejor estética */
+  .notas-list { gap: 2px !important; }
+  .nota-item { border: 1px solid #e2e8f0 !important; border-left: none !important; border-radius: 3px !important; padding: 2px 5px !important; background: transparent !important; page-break-inside: avoid; }
+  .nota-head { font-size: 7.5px !important; margin-bottom: 1px !important; color: #475569 !important; }
+  .nota-resp { color: #475569 !important; }
+  .nota-fecha { font-size: 6.5px !important; color: #94a3b8 !important; }
+  .nota-body { font-size: 8.5px !important; color: #1a1a1a !important; }
+
+  /* Renderizado de la foto adjunta */
+  .nota-attachment {
+    display: block !important;
+    margin-top: 5px !important;
+    page-break-inside: avoid !important;
+  }
+  .nota-attachment .nota-img {
+    display: block !important;
+    max-width: 140px !important;
+    max-height: 100px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 4px !important;
+    margin-top: 4px !important;
+  }
+  .file-pill {
+    display: none !important; /* Esconde el nombre 'hotel-xcaret.png' */
+  }
+
+  /* 3. Firmas seguras hasta abajo de todo */
+  .signature-row {
+    order: 3 !important;
+    grid-column: 1 / -1 !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 15px !important;
+    margin-top: auto !important;
+    padding-top: 15px !important;
+    width: 100% !important;
+    page-break-inside: avoid !important;
+  }
+  .signature-card {
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 10px !important;
+    background: #ffffff !important;
+    height: 110px !important;
+    min-height: 110px !important;
+    max-height: 110px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .signature-card label {
+    font-size: 8px !important;
+    font-weight: 700 !important;
+    color: #1a3a5c !important;
+    margin-bottom: 5px !important;
+    display: block !important;
+  }
+  .signature-canvas {
+    height: 75px !important;
+    min-height: 75px !important;
+    max-height: 75px !important;
+    width: 100% !important;
+    border: none !important;
+    border-bottom: 1px solid #94a3b8 !important;
+    background: transparent !important;
+    display: block !important;
+  }
+
+  #ticketFormRoot { page-break-inside: avoid; }
+}
+
+/* ============================================================
+   inicio de sesión (login)
+============================================================ */
+.login-split { position: relative; min-height: 100vh; width: 100%; display: flex; justify-content: center; align-items: center; padding: 2rem; }
+.login-left { position: fixed; inset: 0; width: 100%; height: 100vh; background-image: url("/img/xcaret.jpg"); background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 3rem; }
+.login-left::before { content: ""; position: absolute; inset: 0; background: rgba(0, 60, 40, 0.55); }
+.login-left-content { position: relative; z-index: 1; color: #fff; }
+.login-logo-placeholder { width: 90px; height: 90px; border-radius: 12px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 600; color: #fff; letter-spacing: 1px; margin-bottom: 1rem; }
+.login-system-title { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+.login-system-sub { font-size: 1rem; color: rgba(255, 255, 255, 0.75); margin: 0; }
+.login-right { position: fixed; z-index: 3; width: min(320px, 100%); min-width: 280px; height: 410px; min-height: 290px; display: flex; align-items: center; justify-content: center; background: rgba(250, 251, 249, 0.96); border: 1px solid rgba(0, 108, 79, 0.14); border-radius: 2rem; padding: 2rem; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12); }
+.login-form-wrap { width: 100%; }
+.login-title { font-size: 1.8rem; font-weight: 700; color: #0b3c35; margin-bottom: 0.25rem; }
+.login-subtitle { font-size: 0.95rem; color: rgba(15, 79, 63, 0.82); margin-bottom: 2rem; }
+.login-right .form-control-lg { border-radius: 10px; border: 1px solid rgba(0, 108, 79, 0.25); background: #fff; color: #2a2a2a; }
+.login-right .form-control-lg::placeholder { color: #9ca3af; }
+.login-right .form-control-lg:focus { border-color: #006C4F; box-shadow: 0 0 0 0.15rem rgba(0, 108, 79, 0.25); }
+.login-right .btn-brand { background: #006C4F; border: none; }
+.login-right .btn-brand:hover { background: #00543d; color: #fff; }
+.login-right .forgot-link { display: block; text-align: center; margin-top: 0.75rem; font-size: 0.85rem; color: #006C4F; text-decoration: none; }
+.login-right .forgot-link:hover { text-decoration: underline; }
+
+@media (max-width: 980px) {
+  .login-right { width: 100%; min-width: unset; min-height: auto; box-shadow: none; background: rgba(255, 255, 255, 0.98); position: relative; }
+  .login-left { position: relative; min-height: 40vh; align-items: center; padding: 2rem; }
+  .login-split { padding: 0; flex-direction: column; }
+}
+/*# sourceMappingURL=main.css.map */

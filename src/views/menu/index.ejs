@@ -1,0 +1,429 @@
+<%
+  // Defensa por si alguna ruta olvida pasar variables
+  const _tab  = (typeof tab  !== 'undefined' && tab)  ? tab  : 'abiertos';
+  const _q    = (typeof q    !== 'undefined' && q)    ? q    : '';
+  const _area = (typeof area !== 'undefined' && area) ? area : '';
+  const _sort = (typeof sort !== 'undefined' && sort) ? sort : 'desc';
+
+
+  function estadoClase(estado) {
+    const e = String(estado || '').toLowerCase();
+    if (e.includes('abierto')) return 'abierto';
+    if (e.includes('proceso')) return 'proceso';
+    if (e.includes('espera'))  return 'espera';
+    if (e.includes('cerr'))    return 'cerrado';
+    return 'cerrado';
+  }
+%>
+<header class="app-header d-flex justify-content-between align-items-center">
+  <h1 class="title m-0">Sistema de Soporte IT</h1>
+  <a href="/logout" class="logout">Cerrar sesión</a>
+</header>
+
+
+<nav class="mb-2">
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a class="nav-link <%= _tab==='abiertos'?'active':'' %>"
+        href="/menu?tab=abiertos&sort=<%= _sort %><%= _q?'&q='+encodeURIComponent(_q):'' %>">
+        Procesos Abiertos
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link <%= _tab==='cerrados'?'active':'' %>"
+        href="/menu?tab=cerrados&sort=<%= _sort %><%= _q?'&q='+encodeURIComponent(_q):'' %>">
+        Procesos Cerrados
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
+<div class="menu-toolbar">
+  <form class="search" action="/menu" method="get">
+    <input type="hidden" name="tab" value="<%= _tab %>">
+    <input type="hidden" name="sort" value="<%= _sort %>">
+    <input type="hidden" id="areaHidden" name="area" value="<%= _area || '' %>">
+    <input class="form-control" type="search" name="q" value="<%= _q %>"
+      placeholder="Buscar por ID, N° de serie, Placa AF, Equipo, Modelo, Tipo, Comentario...">
+  </form>
+
+
+  <select class="form-control" id="filtroArea" style="max-width: 200px;" onchange="filtrarTickets()">
+   <option value="">Todas las áreas</option>
+
+
+<option value="SISTEMAS" <%= _area==='SISTEMAS'?'selected':'' %>>
+    Sistemas
+</option>
+
+
+<option value="Telefonía" <%= _area==='Telefonía'?'selected':'' %>>
+    Telefonía
+</option>
+
+
+<option value="Contraloria" <%= _area==='Contraloria'?'selected':'' %>>
+    Contraloría
+</option>
+
+
+<option value="Compras" <%= _area==='Compras'?'selected':'' %>>
+    Compras
+</option>
+
+
+<option value="Recepción" <%= _area==='Recepción'?'selected':'' %>>
+    Recepción
+</option>
+
+
+<option value="Calidad" <%= _area==='Calidad'?'selected':'' %>>
+    Calidad
+</option>
+
+
+<option value="Seguridad" <%= _area==='Seguridad'?'selected':'' %>>
+    Seguridad
+</option>
+
+
+<option value="Talento Humano" <%= _area==='Talento Humano'?'selected':'' %>>
+    Talento Humano
+</option>
+
+
+<option value="Arte Y Cultura" <%= _area==='Arte Y Cultura'?'selected':'' %>>
+    Arte Y Cultura
+</option>
+
+
+<option value="Tiendas" <%= _area==='Tiendas'?'selected':'' %>>
+    Tiendas
+</option>
+
+
+<option value="Mantenimiento" <%= _area==='Mantenimiento'?'selected':'' %>>
+    Mantenimiento
+</option>
+
+
+<option value="A Y B" <%= _area==='A Y B'?'selected':'' %>>
+    Alimentos y Bebidas
+</option>
+
+
+<option value="Bodas" <%= _area==='Bodas'?'selected':'' %>>
+    Bodas
+</option>
+
+
+<option value="AMA DE LLAVES" <%= _area==='AMA DE LLAVES'?'selected':'' %>>
+    Ama de Llaves
+</option>
+
+
+<option value="Guest Service" <%= _area==='Guest Service'?'selected':'' %>>
+    Guest Service
+</option>
+
+
+<option value="Todo Fluye" <%= _area==='Todo Fluye'?'selected':'' %>>
+    Todo Fluye
+</option>
+  </select>
+
+
+  <a class="btn-outline"
+    href="/menu?tab=<%= _tab %>&sort=<%= _sort==='desc'?'asc':'desc' %><%= _q?'&q='+encodeURIComponent(_q):'' %><%= _area?'&area='+encodeURIComponent(_area):'' %>">
+    <%= _sort==='desc' ? '↓ Más antiguos' : '↑ Más recientes' %>
+  </a>
+
+
+  <% if (isAdmin) { %>
+    <a id="btnCrearTicket" class="btn-beige" href="javascript:void(0)">Crear Ticket</a>
+    <% } %>
+</div>
+
+
+<% if (!tickets || tickets.length===0) { %>
+  <div class="alert alert-warning">No hay tickets para mostrar.</div>
+  <% } else { %>
+    <div class="tickets-grid">
+      <% tickets.forEach(t=> { const estadoCls = estadoClase(t.estado); %>
+        <article class="ticket-card" data-area="<%= (t.area || '').toUpperCase() %>">
+          <a href="/tickets/<%= t.id_ticket %>" class="stretched-link" aria-label="Ver ticket"></a>
+          <!-- Encabezado con línea separadora -->
+          <div class="card-head">
+            <div class="title">
+              Ticket #<%= t.id_ticket %>
+                &nbsp;&nbsp; <span class="muted">Ticket SN:</span>
+                <%= t.ticket_sn || 'NA' %>
+            </div>
+            <div class="date">
+              <%= t.fecha_fmt %>
+            </div>
+          </div>
+
+
+          <!-- Cuerpo en dos columnas -->
+          <div class="card-body">
+            <!-- Columna izquierda: datos -->
+            <div class="info">
+              <p><span class="label">Equipo:</span>
+                <%= [t.equipo, t.modelo].filter(Boolean).join(' ') || ' —' %>
+              </p>
+              <% if (t.area || t.departamento) { %>
+                <p><span class="label">Area / Departamento:</span>
+                  <%= [t.area, t.departamento].filter(Boolean).join(' / ') %>
+        </p>
+      <% } %>
+      <p><span class="label">Caso:</span> <%= t.tipo %></p>
+      <p><span class="label">Comentario:</span> <%= t.resumen || ' —' %>
+                </p>
+
+
+                <div class="sep"></div>
+
+
+                <p><span class="label">Creado por:</span>
+                  <%= t.resp_interno || '—' %>
+                </p>
+                <p class="mb-0"><span class="label">Responsable del equipo:</span>
+                  <%= t.usuario_resp %>
+                </p>
+            </div>
+
+
+            <!-- Columna derecha: badge de estado -->
+            <aside class="aside">
+              <span class="badge-estado <%= estadoClase(t.estado) %>">
+                <%= t.estado %>
+              </span>
+            </aside>
+          </div>
+        </article>
+        <% }) %>
+    </div>
+    <% } %>
+
+
+      <!-- Modal Selección de Tipo -->
+      <div id="modalTipo" class="modal-overlay" aria-hidden="true">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+          <h3 id="modalTitulo" class="modal-title">Seleccionar tipo de ticket</h3>
+
+
+          <div class="tipo-grid">
+            <button class="opcion" data-tipo="DIAG" type="button" aria-pressed="false">
+              <!-- Ícono opcional -->
+              <div class="opcion-icono">🧪</div>
+              <div class="opcion-titulo">Diagnóstico</div>
+            </button>
+
+
+            <button class="opcion" data-tipo="MANT" type="button" aria-pressed="false">
+              <div class="opcion-icono">🛠️</div>
+              <div class="opcion-titulo">Mantenimiento</div>
+            </button>
+
+
+            <button class="opcion" data-tipo="GAR" type="button" aria-pressed="false">
+              <div class="opcion-icono">📦</div>
+              <div class="opcion-titulo">Garantía</div>
+            </button>
+
+
+            <button class="opcion" data-tipo="CONFIG" type="button" aria-pressed="false">
+              <div class="opcion-icono">⚙️</div>
+              <div class="opcion-titulo">Configuración</div>
+            </button>
+          </div>
+
+
+          <div class="modal-actions">
+            <button type="button" class="btn-beige" id="btnCancelarModal">Cancelar</button>
+            <button type="button" class="btn-brand" id="btnContinuarModal" disabled>Continuar</button>
+          </div>
+
+
+          <button class="modal-close" id="btnCerrarX" aria-label="Cerrar">×</button>
+        </div>
+      </div>
+
+
+      <script>
+        (() => {
+          const openBtn = document.getElementById('btnCrearTicket');
+          const overlay = document.getElementById('modalTipo');
+          const btnCancelar = document.getElementById('btnCancelarModal');
+          const btnCerrarX = document.getElementById('btnCerrarX');
+          const btnContinuar = document.getElementById('btnContinuarModal');
+          const opciones = Array.from(document.querySelectorAll('#modalTipo .opcion'));
+          let seleccionado = null;
+
+
+          function openModal() {
+            overlay.classList.add('show');
+            overlay.setAttribute('aria-hidden', 'false');
+            btnContinuar.disabled = true;
+            seleccionado = null;
+            opciones.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+            // focus
+            setTimeout(() => opciones[0]?.focus(), 0);
+            document.addEventListener('keydown', escClose);
+          }
+          function closeModal() {
+            overlay.classList.remove('show');
+            overlay.setAttribute('aria-hidden', 'true');
+            document.removeEventListener('keydown', escClose);
+            openBtn.focus();
+          }
+          function escClose(e) { if (e.key === 'Escape') closeModal(); }
+
+
+          openBtn.addEventListener('click', openModal);
+          btnCancelar.addEventListener('click', closeModal);
+          btnCerrarX.addEventListener('click', closeModal);
+          overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+
+          opciones.forEach(btn => {
+            btn.addEventListener('click', () => {
+              opciones.forEach(b => { b.classList.remove('selected'); b.setAttribute('aria-pressed', 'false'); });
+              btn.classList.add('selected');
+              btn.setAttribute('aria-pressed', 'true');
+              seleccionado = btn.dataset.tipo;
+              btnContinuar.disabled = false;
+            });
+          });
+
+
+          btnContinuar.addEventListener('click', () => {
+            if (!seleccionado) return;
+
+
+            const map = {
+              DIAG: 'Diagnóstico',
+              MANT: 'Mantenimiento',
+              GAR: 'Garantía',
+              CONFIG: 'Configuración'
+            };
+            const tipoNombre = map[seleccionado] || seleccionado;
+            window.location.href = `/tickets/nuevo?tipo=${encodeURIComponent(tipoNombre)}`;
+          });
+          
+        })();
+
+
+        // Función para filtrar tickets por área sin recargar la página
+        function filtrarTickets() {
+          const areaSeleccionada = document.getElementById('filtroArea').value.toUpperCase();
+          const tarjetas = document.querySelectorAll('.ticket-card');
+          let ticketsVisibles = 0;
+
+          tarjetas.forEach(tarjeta => {
+            const areaTicket = (tarjeta.getAttribute('data-area') || '').toUpperCase();
+            
+            if (areaSeleccionada === '' || areaTicket === areaSeleccionada) {
+              tarjeta.style.display = '';
+              ticketsVisibles++;
+            } else {
+              tarjeta.style.display = 'none';
+            }
+          });
+
+          // Mantener el área en el formulario de búsqueda
+          document.getElementById('areaHidden').value = areaSeleccionada;
+
+          // Mostrar/ocultar mensaje si no hay resultados
+          let alerta = document.getElementById('alertaSinResultados');
+          if (ticketsVisibles === 0) {
+            if (!alerta) {
+              alerta = document.createElement('div');
+              alerta.id = 'alertaSinResultados';
+              alerta.className = 'alert alert-warning';
+              alerta.textContent = 'No hay tickets para el área seleccionada.';
+              document.querySelector('.menu-toolbar').insertAdjacentElement('afterend', alerta);
+            }
+            alerta.style.display = '';
+          } else if (alerta) {
+            alerta.style.display = 'none';
+          }
+        }
+
+        // Ejecutar al cargar la página por si viene con área pre-seleccionada desde URL
+        document.addEventListener('DOMContentLoaded', filtrarTickets);
+      </script>
+      <script>
+// ========================
+// NOTIFICACIONES DEL NAVEGADOR
+// ========================
+
+let ultimoIdTicket = 0;
+const INTERVALO_CHECK = 30000; // 30 segundos
+
+// Inicializar el último ID conocido al cargar la página
+async function inicializarNotificaciones() {
+  try {
+    const respuesta = await fetch('/menu/api/tickets/ultimo-id');
+    const datos = await respuesta.json();
+    ultimoIdTicket = datos.ultimoId || 0;
+  } catch (e) {
+    console.log('Error al inicializar notificaciones:', e);
+  }
+}
+
+// Verificar si hay nuevos tickets cada X segundos
+async function verificarNuevosTickets() {
+  try {
+    const respuesta = await fetch('/menu/api/tickets/ultimo-id');
+    const datos = await respuesta.json();
+    const idActual = datos.ultimoId || 0;
+    
+    if (idActual > ultimoIdTicket) {
+      // Hay nuevos tickets
+      const nuevosTickets = idActual - ultimoIdTicket;
+      mostrarNotificacion(
+        '🎫 Nuevo Ticket',
+        `Se han creado ${nuevosTickets} nuevo${nuevosTickets > 1 ? 's' : ''} ticket${nuevosTickets > 1 ? 's' : ''}`
+      );
+      ultimoIdTicket = idActual;
+    }
+  } catch (e) {
+    console.log('Error al verificar tickets:', e);
+  }
+}
+
+// Mostrar notificación del navegador
+function mostrarNotificacion(titulo, mensaje) {
+  if (!('Notification' in window)) {
+    console.log('Este navegador no soporta notificaciones');
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    // Ya tenemos permiso
+    new Notification(titulo, {
+      body: mensaje,
+      icon: '/favicon.ico' // Opcional: icono
+    });
+  } else if (Notification.permission !== 'denied') {
+    // Pedir permiso
+    Notification.requestPermission().then(permiso => {
+      if (permiso === 'granted') {
+        new Notification(titulo, {
+          body: mensaje,
+          icon: '/favicon.ico'
+        });
+      }
+    });
+  }
+}
+
+// Iniciar
+document.addEventListener('DOMContentLoaded', async () => {
+  await inicializarNotificaciones();
+  setInterval(verificarNuevosTickets, INTERVALO_CHECK);
+});
+</script>
