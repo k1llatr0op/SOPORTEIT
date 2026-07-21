@@ -1,7 +1,7 @@
 <header class="app-header d-flex justify-content-between align-items-center">
     <h1 class="title m-0">Sistema de Soporte IT</h1>
     <div class="d-flex gap-2 align-items-center">
-        <a href="/logout" class="logout">Cerrar sesión</a>
+        <a href="<%= basePath %>/logout" class="logout">Cerrar sesión</a>
     </div>
 </header>
 
@@ -13,11 +13,11 @@
         <div class="form-head-right">
             <button type="button" id="btnEstado" class="btn-estado abierto" data-estado="ABIERTO">ABIERTO</button>
             <button type="submit" class="btn-brand" form="formTicket">Guardar</button>
-            <a href="/menu" class="btn-beige">Cancelar</a>
+            <a href="<%= basePath %>/menu" class="btn-beige">Cancelar</a>
         </div>
     </div>
 
-    <form id="formTicket" action="/tickets/guardar" method="post" novalidate>
+    <form id="formTicket" action="<%= basePath %>/tickets/guardar" method="post" novalidate>
         <input type="hidden" id="estadoInput" name="estado" value="ABIERTO">
         <input type="hidden" name="tipo" value="<%= tipo %>">
 

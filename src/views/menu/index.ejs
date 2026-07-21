@@ -4,7 +4,7 @@
   const _q    = (typeof q    !== 'undefined' && q)    ? q    : '';
   const _area = (typeof area !== 'undefined' && area) ? area : '';
   const _sort = (typeof sort !== 'undefined' && sort) ? sort : 'desc';
-
+  const _basePath = (typeof basePath !== 'undefined') ? basePath : '';
 
   function estadoClase(estado) {
     const e = String(estado || '').toLowerCase();
@@ -17,7 +17,7 @@
 %>
 <header class="app-header d-flex justify-content-between align-items-center">
   <h1 class="title m-0">Sistema de Soporte IT</h1>
-  <a href="/logout" class="logout">Cerrar sesión</a>
+  <a href="<%= _basePath %>/logout" class="logout">Cerrar sesión</a>
 </header>
 
 
@@ -25,13 +25,13 @@
   <ul class="nav nav-tabs">
     <li class="nav-item">
       <a class="nav-link <%= _tab==='abiertos'?'active':'' %>"
-        href="/menu?tab=abiertos&sort=<%= _sort %><%= _q?'&q='+encodeURIComponent(_q):'' %>">
+        href="<%= _basePath %>/menu?tab=abiertos&sort=<%= _sort %><%= _q?'&q='+encodeURIComponent(_q):'' %>">
         Procesos Abiertos
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link <%= _tab==='cerrados'?'active':'' %>"
-        href="/menu?tab=cerrados&sort=<%= _sort %><%= _q?'&q='+encodeURIComponent(_q):'' %>">
+        href="<%= _basePath %>/menu?tab=cerrados&sort=<%= _sort %><%= _q?'&q='+encodeURIComponent(_q):'' %>">
         Procesos Cerrados
       </a>
     </li>
@@ -40,7 +40,7 @@
 
 
 <div class="menu-toolbar">
-  <form class="search" action="/menu" method="get">
+  <form class="search" action="<%= _basePath %>/menu" method="get">
     <input type="hidden" name="tab" value="<%= _tab %>">
     <input type="hidden" name="sort" value="<%= _sort %>">
     <input type="hidden" id="areaHidden" name="area" value="<%= _area || '' %>">
@@ -135,7 +135,7 @@
 
 
   <a class="btn-outline"
-    href="/menu?tab=<%= _tab %>&sort=<%= _sort==='desc'?'asc':'desc' %><%= _q?'&q='+encodeURIComponent(_q):'' %><%= _area?'&area='+encodeURIComponent(_area):'' %>">
+    href="<%= _basePath %>/menu?tab=<%= _tab %>&sort=<%= _sort==='desc'?'asc':'desc' %><%= _q?'&q='+encodeURIComponent(_q):'' %><%= _area?'&area='+encodeURIComponent(_area):'' %>">
     <%= _sort==='desc' ? '↓ Más antiguos' : '↑ Más recientes' %>
   </a>
 
@@ -152,7 +152,7 @@
     <div class="tickets-grid">
       <% tickets.forEach(t=> { const estadoCls = estadoClase(t.estado); %>
         <article class="ticket-card" data-area="<%= (t.area || '').toUpperCase() %>">
-          <a href="/tickets/<%= t.id_ticket %>" class="stretched-link" aria-label="Ver ticket"></a>
+          <a href="<%= _basePath %>/tickets/<%= t.id_ticket %>" class="stretched-link" aria-label="Ver ticket"></a>
           <!-- Encabezado con línea separadora -->
           <div class="card-head">
             <div class="title">
@@ -261,6 +261,7 @@
           const btnContinuar = document.getElementById('btnContinuarModal');
           const opciones = Array.from(document.querySelectorAll('#modalTipo .opcion'));
           let seleccionado = null;
+          const basePath = '<%= _basePath %>';
 
 
           function openModal() {
@@ -310,7 +311,7 @@
               CONFIG: 'Configuración'
             };
             const tipoNombre = map[seleccionado] || seleccionado;
-            window.location.href = `/tickets/nuevo?tipo=${encodeURIComponent(tipoNombre)}`;
+            window.location.href = basePath + '/tickets/nuevo?tipo=' + encodeURIComponent(tipoNombre);
           });
           
         })();
@@ -362,11 +363,12 @@
 
 let ultimoIdTicket = 0;
 const INTERVALO_CHECK = 30000; // 30 segundos
+const basePath = '<%= _basePath %>';
 
 // Inicializar el último ID conocido al cargar la página
 async function inicializarNotificaciones() {
   try {
-    const respuesta = await fetch('/menu/api/tickets/ultimo-id');
+    const respuesta = await fetch(basePath + '/menu/api/tickets/ultimo-id');
     const datos = await respuesta.json();
     ultimoIdTicket = datos.ultimoId || 0;
   } catch (e) {
@@ -377,7 +379,7 @@ async function inicializarNotificaciones() {
 // Verificar si hay nuevos tickets cada X segundos
 async function verificarNuevosTickets() {
   try {
-    const respuesta = await fetch('/menu/api/tickets/ultimo-id');
+    const respuesta = await fetch(basePath + '/menu/api/tickets/ultimo-id');
     const datos = await respuesta.json();
     const idActual = datos.ultimoId || 0;
     
@@ -386,7 +388,7 @@ async function verificarNuevosTickets() {
       const nuevosTickets = idActual - ultimoIdTicket;
       mostrarNotificacion(
         '🎫 Nuevo Ticket',
-        `Se han creado ${nuevosTickets} nuevo${nuevosTickets > 1 ? 's' : ''} ticket${nuevosTickets > 1 ? 's' : ''}`
+        'Se han creado ' + nuevosTickets + ' nuevo' + (nuevosTickets > 1 ? 's' : '') + ' ticket' + (nuevosTickets > 1 ? 's' : '')
       );
       ultimoIdTicket = idActual;
     }
@@ -406,7 +408,7 @@ function mostrarNotificacion(titulo, mensaje) {
     // Ya tenemos permiso
     new Notification(titulo, {
       body: mensaje,
-      icon: '/favicon.ico' // Opcional: icono
+      icon: basePath + '/favicon.ico' // Opcional: icono
     });
   } else if (Notification.permission !== 'denied') {
     // Pedir permiso
@@ -414,7 +416,7 @@ function mostrarNotificacion(titulo, mensaje) {
       if (permiso === 'granted') {
         new Notification(titulo, {
           body: mensaje,
-          icon: '/favicon.ico'
+          icon: basePath + '/favicon.ico'
         });
       }
     });
