@@ -4,7 +4,6 @@
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/app.js",
     "dev": "concurrently \"nodemon src/app.js\" \"sass --watch src/public/scss/main.scss src/public/css/main.css\"",
     "sass": "sass --watch src/public/scss/main.scss src/public/css/main.css"
   },
