@@ -99,18 +99,6 @@ router.get('/nuevo', requiereSesion, requiereAdmin, (req, res) => {
   return res.render('tickets/form_diag_mant', { title: 'Nuevo Diagnóstico', tipo: 'Diagnóstico' });
 });
 
-// Ruta para verificar nuevos tickets (para notificaciones)
-router.get('/api/tickets/ultimo-id', async (req, res) => {
-  try {
-    const [[ticket]] = await pool.query(
-      'SELECT id_ticket FROM tickets ORDER BY id_ticket DESC LIMIT 1'
-    );
-    res.json({ ultimoId: ticket ? ticket.id_ticket : 0 });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 // ---------- POST /tickets/guardar ----------
 router.post('/guardar', requiereSesion, requiereAdmin, async (req, res) => {
   const conn = await pool.getConnection();

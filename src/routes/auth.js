@@ -5,9 +5,6 @@ const router = Router();
 const { pool } = require("../config/db"); // asegura que exportas { pool } en config/db.js
 const { requiereSesion } = require('../middlewares/auth');
 
-// Ruta base desde variables de entorno
-const BASE_PATH = process.env.BASE_PATH || '';
-
 // (Opcional) Evitar cache cuando hay sesión activa
 router.use((req, res, next) => {
   res.set("Cache-Control", "no-store");
@@ -21,7 +18,6 @@ router.get(["/", "/login"], (req, res) => {
     title: "Iniciar sesión",
     error: error || null,
     lastUser: "",
-    basePath: BASE_PATH,
   });
 });
 
@@ -81,12 +77,11 @@ router.post("/login", async (req, res) => {
         return res.status(500).render("auth/login", {
           title: "Iniciar sesión",
           error: "Error interno del servidor",
-          lastUser: usuario,
-          basePath: BASE_PATH
+          lastUser: usuario
         });
       }
       req.session.usuario = user;
-      req.session.save(() => res.redirect(`${BASE_PATH}/menu`));
+      req.session.save(() => res.redirect("/menu"));
     });
 
   } catch (err) {
@@ -108,7 +103,6 @@ router.get("/forgot-password", (req, res) => {
     error: null,
     message: null,
     contacto: "",
-    basePath: BASE_PATH,
   });
 });
 
@@ -120,7 +114,6 @@ router.post("/forgot-password", (req, res) => {
       error: "Por favor ingresa tu correo o número de celular registrado.",
       message: null,
       contacto,
-      basePath: BASE_PATH,
     });
   }
 
@@ -129,7 +122,6 @@ router.post("/forgot-password", (req, res) => {
     error: null,
     message: "Si el correo o celular existe en el registro, te enviaremos un enlace para restablecer la contraseña.",
     contacto,
-    basePath: BASE_PATH,
   });
 });
 
@@ -138,7 +130,7 @@ router.get("/logout", (req, res) => {
   // destruye la sesión y limpia la cookie
   req.session.destroy(() => {
     res.clearCookie("connect.sid");
-    res.redirect(`${BASE_PATH}/login`);
+    res.redirect("/login");
   });
 });
 

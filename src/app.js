@@ -9,9 +9,6 @@ const { requiereSesion } = require('./middlewares/auth');
 
 const { pool } = require("./config/db");
 
-// Ruta base para despliegue en subcarpeta (ej: /SOPORTEIT)
-const BASE_PATH = process.env.BASE_PATH || '';
-
 const app = express();
 
 // ======= Configuración de sesión (debe ir antes de las rutas) =======
@@ -31,7 +28,6 @@ app.use((req, res, next) => {
   res.locals.usuario = req.session?.usuario || null;
   res.locals.isAdmin =
     req.session?.usuario?.rol?.toUpperCase?.() === 'ADMIN';
-  res.locals.basePath = BASE_PATH;
   next();
 });
 
